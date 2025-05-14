@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>음료 메뉴</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .menu-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .menu-item {
+            width: 220px;
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .menu-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        .controls {
+            margin-top: 10px;
+        }
+        .controls button {
+            margin: 0 5px;
+        }
+        #cart {
+            margin-top: 40px;
+            text-align: center;
+        }
+    </style>
+    <script>
+        const cart = {};
+        const menuItems = {{ menu_items | tojson }};  // 가격 정보를 JavaScript로 전달
+
+        function addToCart(item) {
+            if (!cart[item]) cart[item] = 0;
+            cart[item]++;
+            updateCart();
+        }
+
+        function increase(item) {
+            cart[item]++;
+            updateCart();
+        }
+
+        function decrease(item) {
+            if (cart[item] > 0) cart[item]--;
+            updateCart();
+        }
+
+        function updateCart() {
+            let html = '';
+            let total = 0;
+            for (const item in cart) {
+                if (cart[item] > 0) {
+                    html += `<p>${item}: ${cart[item]} 
+                        <button onclick="increase('${item}')">+</button> 
+                        <button onclick="decrease('${item}')">-</button></p>`;
+                    total += menuItems[item] * cart[item];
+                }
+            }
+            document.getElementById('cart-items').innerHTML = html;
+            document.getElementById('cartData').value = JSON.stringify(cart);
+            document.getElementById('total-price').innerText = `총액: ${total}원`;
+        }
+
+        function submitForm() {
+            document.getElementById('cart-form').submit();
+        }
+    </script>
+</head>
+<body>
+    <h1>음료를 선택하세요</h1>
+    <div class="menu-container">
+        {% for item, price in menu_items.items() %}
+        <div class="menu-item">
+            <img src="{{ url_for('static', filename='images/' + item|replace('아메리카노','americano')|replace('카페라떼','latte')|replace('초코라떼','choco')|replace('녹차라떼','green')|replace('딸기라떼','strawberry')|replace('바닐라라떼','vanilla') + ('.jpg' if item in ['아메리카노', '카페라떼'] else '.jpeg')) }}" alt="{{ item }}">
+            <h3>{{ item }}</h3>
+            <p>가격: {{ price }}원</p>
+            <div class="controls">
+                <button onclick="addToCart('{{ item }}')">선택</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div id="cart">
+        <h2>🛒 장바구니</h2>
+        <div id="cart-items"></div>
+        <p id="total-price">총액: 0원</p>
+        <form id="cart-form" action="{{ url_for('payment') }}" method="post">
+            <input type="hidden" name="cartData" id="cartData">
+            <button type="button" onclick="submitForm()">결제하기</button>
+        </form>
+    </div>
+</body>
+</html>
