@@ -2,12 +2,12 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>음료 메뉴</title>
+    <title>음료메뉴</title>
     <style>
         body {
             text-align: center;
             background-color: #f8f8f8;
-            font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+            font-family: sans-serif;
             margin: 0;
             padding: 0;
         }
@@ -19,7 +19,7 @@
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            margin: 30px;
+            margin-top: 30px;
         }
         .menu-item {
             background-color: white;
@@ -45,13 +45,8 @@
             margin-top: 10px;
             font-size: 1.2em;
         }
-        .menu-item button {
-            background-color: #009688;
-            color: white;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+        .menu-item p {
+            margin: 5px 0;
         }
         #cart {
             background-color: #fff;
@@ -64,7 +59,7 @@
             margin: 10px 0;
         }
         #cart-items button {
-            margin: 0 3px;
+            margin-left: 5px;
         }
         #checkout-btn {
             background-color: #009688;
@@ -76,201 +71,277 @@
             cursor: pointer;
             margin-top: 15px;
         }
-        #option-modal {
+        .option-modal {
             display: none;
             position: fixed;
-            top: 20%;
+            top: 5%;
             left: 50%;
             transform: translateX(-50%);
             background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3);
-            z-index: 999;
+            width: 600px;
+            height: 550px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            border-radius: 20px;
+            overflow-y: auto;
+            z-index: 1000;
+            font-size: 18px;
+        }
+        .option-section {
+            margin-top: 20px;
+        }
+        .option-section h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .options label {
+            background: #eee;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        .footer button {
+            padding: 12px 24px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .cancel-btn {
+            background-color: #ccc;
+        }
+        .confirm-btn {
+            background-color: #009688;
+            color: white;
+        }
+        .item-price {
+            margin-left: 10px;
+            font-weight: bold;
+            color: #444;
         }
     </style>
 </head>
 <body>
     <h1>음료를 선택하세요</h1>
     <div class="menu-container">
-        <div class="menu-item">
+        <div class="menu-item" onclick="openOptionModal('아메리카노',2000)">
             <img src="{{ url_for('static', filename='images/americano.jpg') }}" alt="아메리카노">
             <h3>아메리카노</h3>
             <p>가격: 2000원</p>
-            <button onclick="openOptions('아메리카노', 2000)">선택</button>
         </div>
-        <div class="menu-item">
+        <div class="menu-item" onclick="openOptionModal('카페라떼',3000)">
             <img src="{{ url_for('static', filename='images/latte.jpg') }}" alt="카페라떼">
             <h3>카페라떼</h3>
             <p>가격: 3000원</p>
-            <button onclick="openOptions('카페라떼', 3000)">선택</button>
         </div>
-        <div class="menu-item">
-            <img src="{{ url_for('static', filename='images/choco.jpeg') }}" alt="초코라떼">
+        <div class="menu-item" onclick="openOptionModal('초코라떼',4500)">
+            <img src="{{ url_for('static', filename='images/choco.jpeg') }}" alt="카페라떼">
             <h3>초코라떼</h3>
             <p>가격: 4500원</p>
-            <button onclick="openOptions('초코라떼', 4500)">선택</button>
         </div>
-        <div class="menu-item">
-            <img src="{{ url_for('static', filename='images/green.jpeg') }}" alt="녹차라떼">
+        <div class="menu-item" onclick="openOptionModal('녹차라떼',4000)">
+            <img src="{{ url_for('static', filename='images/green.jpeg') }}" alt="카페라떼">
             <h3>녹차라떼</h3>
             <p>가격: 4000원</p>
-            <button onclick="openOptions('녹차라떼', 4000)">선택</button>
         </div>
-        <div class="menu-item">
-            <img src="{{ url_for('static', filename='images/strawberry.jpeg') }}" alt="딸기라떼">
+        <div class="menu-item" onclick="openOptionModal('딸기라떼',4500)">
+            <img src="{{ url_for('static', filename='images/strawberry.jpeg') }}" alt="카페라떼">
             <h3>딸기라떼</h3>
             <p>가격: 4500원</p>
-            <button onclick="openOptions('딸기라떼', 4500)">선택</button>
         </div>
-        <div class="menu-item">
-            <img src="{{ url_for('static', filename='images/vanilla.jpeg') }}" alt="바닐라라떼">
+        <div class="menu-item" onclick="openOptionModal('바닐라라떼',3500)">
+            <img src="{{ url_for('static', filename='images/vanilla.jpeg') }}" alt="카페라떼">
             <h3>바닐라라떼</h3>
             <p>가격: 3500원</p>
-            <button onclick="openOptions('바닐라라떼', 3500)">선택</button>
         </div>
+
+
+        
     </div>
 
     <div id="cart">
-        <h2>
-            <img src="{{ url_for('static', filename='images/cart.jpg') }}" alt="장바구니" style="width:24px; vertical-align:middle; margin-right:5px;">
-            장바구니
-        </h2>
+        <h2><img src="{{ url_for('static', filename='images/cart.jpg') }}" alt="장바구니" style="width: 24px;"></h2>
         <ul id="cart-items"></ul>
         <p>총액: <span id="total">0</span>원</p>
         <button id="checkout-btn" onclick="checkout()">결제하기</button>
     </div>
 
-    <!-- 옵션 선택 모달 -->
-    <div id="option-modal">
-        <h3 id="modal-title">옵션 선택</h3>
+    <div class="option-modal" id="optionModal">
+        <h2 id="optionTitle">선택한 음료</h2>
+        <p>선택하신 상품의 옵션을 모두 선택해주세요.</p>
 
-        <p><strong>사이즈:</strong></p>
-        <label><input type="radio" name="size" value="스몰" checked> 스몰</label>
-        <label><input type="radio" name="size" value="라지"> 라지 (+1000원)</label>
+        <div class="option-section">
+            <h3>온도 선택</h3>
+            <div class="options">
+                <label><input type="radio" name="temp" value="ICE"> ICE</label>
+                <label><input type="radio" name="temp" value="HOT"> HOT</label>
+            </div>
+        </div>
 
-        <p><strong>시럽:</strong></p>
-        <select id="syrup-select">
-            <option value="없음" data-price="0">없음</option>
-            <option value="바닐라" data-price="500">바닐라 (+500원)</option>
-            <option value="헤이즐넛" data-price="500">헤이즐넛 (+500원)</option>
-        </select>
+        <div class="option-section" id="requests">
+            <h3>요청사항</h3>
+            <div class="options">
+                <label><input type="checkbox" class="req-option" value="없음" checked>없음</label>
+                <label><input type="checkbox" class="req-option" value="얼음 적게">얼음 적게</label>
+                <label><input type="checkbox" class="req-option" value="우유 조금">우유 조금</label>
+                <label><input type="checkbox" class="req-option" value="연하게">연하게</label>
+                <label><input type="checkbox" class="req-option" value="덜달게게">덜달게</label>
+            </div>
+        </div>
 
-        <p><strong>수량:</strong>
-            <button onclick="changeOptionCount(1)">+</button>
-            <span id="option-count">1</span>
-            <button onclick="changeOptionCount(-1)">-</button>
-        </p>
+        <div class="option-section" id="adds">
+            <h3>추가 옵션 (각 +500)</h3>
+            <div class="options">
+                <label><input type="checkbox" class ="add-option" value="없음" checked>없음</label>
+                <label><input type="checkbox" class ="add-option" data-price="500"> 샷 추가</label>
+                <label><input type="checkbox" class ="add-option" data-price="500"> 휘핑 추가</label>
+                <label><input type="checkbox" class ="add-option" data-price="500"> 바닐라 시럽</label>
+            </div>
+        </div>
 
-        <button onclick="confirmOptions()">추가하기</button>
-        <button onclick="closeModal()">취소</button>
+        <div class="footer">
+            <button class="cancel-btn" onclick="closeOptionModal()">취소</button>
+            <button class="confirm-btn" onclick="addToCart()">주문담기</button>
+        </div>
     </div>
 
-    <script>
-        const cart = {};
-        const deleteIcon = "{{ url_for('static', filename='images/x.jpg') }}";
+<script>
+    let total = 0;
+    let selectedItem = { name: '', price: 0 };
 
-        function openOptions(item, price) {
-            currentItem = item;
-            currentPrice = price;
-            document.getElementById('modal-title').innerText = `${item} 옵션 선택`;
-            document.getElementById('option-count').innerText = "1";
-            document.querySelector('input[name="size"][value="스몰"]').checked = true;
-            document.getElementById('syrup-select').value = "없음";
-            document.getElementById('option-modal').style.display = 'block';
-        }
+    function openOptionModal(name, price) {
+        selectedItem = { name, price };
+        document.getElementById('optionTitle').innerText = name;
+        document.getElementById('optionModal').style.display = 'block';
+    }
 
-        function closeModal() {
-            document.getElementById('option-modal').style.display = 'none';
-        }
+    function closeOptionModal() {
+        document.getElementById('optionModal').style.display = 'none';
+    }
 
-        let currentItem = "";
-        let currentPrice = 0;
+    function addToCart() {
+        const name = document.getElementById('optionTitle').innerText;
+        const basePrice = selectedItem.price;
 
-        function changeOptionCount(delta) {
-            const countSpan = document.getElementById('option-count');
-            let count = parseInt(countSpan.innerText);
-            count = Math.max(1, count + delta);
-            countSpan.innerText = count;
-        }
+        const temp = document.querySelector('input[name="temp"]:checked');
+        const tempVal = temp ? temp.value : '';
 
-        function confirmOptions() {
-            const size = document.querySelector('input[name="size"]:checked').value;
-            const syrupOption = document.getElementById('syrup-select');
-            const syrup = syrupOption.value;
-            const syrupPrice = parseInt(syrupOption.selectedOptions[0].dataset.price);
-            const count = parseInt(document.getElementById('option-count').innerText);
+        const reqs = Array.from(document.querySelectorAll('.option-section:nth-child(4) input:checked'))
+                          .map(cb => cb.parentElement.textContent.trim());
 
-            const finalItem = `${currentItem} (${size}, ${syrup})`;
-            const finalPrice = currentPrice + (size === "라지" ? 1000 : 0) + syrupPrice;
+        const adds = [];
+        let extra = 0;
+        const addCheckboxes = document.querySelectorAll('#adds input:checked');
+        addCheckboxes.forEach(cb => {
+            const label = cb.parentElement.textContent.trim();
+            const price = parseInt(cb.dataset.price || "0");
+            adds.push(label);
+            extra += price;
+        });
 
-            if (!cart[finalItem]) {
-                cart[finalItem] = { count, price: finalPrice };
+        const finalPrice = basePrice + extra;
+        const optionsSummary = [tempVal, ...reqs, ...adds].filter(Boolean).join(', ');
+
+        const li = document.createElement('li');
+        const quantity = 1;
+
+       li.innerHTML = `
+            <img src="{{ url_for('static', filename='images/x.jpg') }}"
+                style="width: 20px; cursor: pointer;"
+                onclick="removeItem(this, ${finalPrice})">
+            ${name} (${optionsSummary}) :
+            <span class="item-qty">${quantity}</span>
+            <button onclick="changeQuantity(this, ${finalPrice}, 1)">+</button>
+            <button onclick="changeQuantity(this, ${finalPrice}, -1)">-</button>
+            <span class="item-price">${finalPrice * quantity}원</span>
+        `;
+
+        document.getElementById('cart-items').appendChild(li);
+        total += finalPrice;
+        document.getElementById('total').textContent = total;
+
+        closeOptionModal();
+    }
+
+    function changeQuantity(button, price, delta) {
+        const li = button.parentElement;
+        const qtySpan = li.querySelector('.item-qty');
+        let qty = parseInt(qtySpan.textContent);
+
+        if (qty + delta <= 0) return;
+
+        qty += delta;
+        qtySpan.textContent = qty;
+
+        total += price * delta;
+        document.getElementById('total').textContent = total;
+
+        const priceSpan = li.querySelector('.item-price');
+        priceSpan.textContent = (qty * price) + '원';
+    }
+
+    function removeItem(button, price) {
+        const li = button.parentElement;
+        const qty = parseInt(li.querySelector('.item-qty').textContent);
+        total -= price * qty;
+        document.getElementById('total').textContent = total;
+        li.remove();
+    }
+
+    function checkout() {
+        alert('결제는 준비 중입니다.');
+    }
+    // 요청사항: '없음' 체크 해제 & 자동 선택
+    document.querySelectorAll('#requests .req-option').forEach(cb => {
+        cb.addEventListener('change', () => {
+            const all = Array.from(document.querySelectorAll('#requests .req-option'));
+            const noneOption = all.find(e => e.value === "없음");
+
+            if (cb.value === "없음" && cb.checked) {
+                all.forEach(e => { if (e !== noneOption) e.checked = false; });
             } else {
-                cart[finalItem].count += count;
+                noneOption.checked = false;
             }
 
-            closeModal();
-            updateCart();
-        }
-
-        function updateCart() {
-            const cartItems = document.getElementById('cart-items');
-            const totalDisplay = document.getElementById('total');
-            cartItems.innerHTML = '';
-            let total = 0;
-
-            for (const [item, data] of Object.entries(cart)) {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <img src="${deleteIcon}" onclick="removeItem('${item}')" style="width:18px; cursor:pointer; vertical-align:middle; margin-right:5px;">
-                    ${item}: ${data.count}
-                    <button onclick="changeCount('${item}', 1)">+</button>
-                    <button onclick="changeCount('${item}', -1)">-</button>
-                    <span> ${data.price}원</span>
-                `;
-                cartItems.appendChild(li);
-                total += data.count * data.price;
+            if (!all.some(e => e.checked)) {
+                noneOption.checked = true;
             }
-            totalDisplay.innerText = total;
-        }
+        });
+    });
 
-        function changeCount(item, delta) {
-            cart[item].count += delta;
-            if (cart[item].count <= 0) {
-                delete cart[item];
-            }
-            updateCart();
-        }
+// 추가옵션: '없음' 체크 해제 & 자동 선택
+    document.querySelectorAll('#adds .add-option').forEach(cb => {
+        cb.addEventListener('change', () => {
+            const all = Array.from(document.querySelectorAll('#adds .add-option'));
+            const noneOption = all.find(e => e.value === "없음");
 
-        function removeItem(item) {
-            delete cart[item];
-            updateCart();
-        }
-
-        function checkout() {
-            const orderData = [];
-
-            for (const [item, data] of Object.entries(cart)) {
-                if (data.count > 0) {
-                    orderData.push({
-                        name: item,
-                        count: data.count,
-                        price: data.price
-                    });
-                }
+            if (cb.value === "없음" && cb.checked) {
+                all.forEach(e => { if (e !== noneOption) e.checked = false; });
+            } else {
+                noneOption.checked = false;
             }
 
-            fetch("/payment", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ order: orderData })
-            })
-            .then(response => response.redirected ? window.location.href = response.url : null)
-            .catch(error => console.error("Error during checkout:", error));
-        }
-    </script>
+            if (!all.some(e => e.checked)) {
+                noneOption.checked = true;
+            }
+        });
+    });
+
+
+</script>
+
 </body>
 </html>

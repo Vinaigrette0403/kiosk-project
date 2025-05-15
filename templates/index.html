@@ -2,16 +2,37 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>키오스크 시작</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #5c3a1e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #intro {
+            cursor: pointer;
+            text-align: center;
+        }
+        #intro img {
+            max-width: 400px;
+            border-radius: 20px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>어서오세요!</h1> 
-        <form action="{{ url_for('menu') }}" method="get">
-            <button type="submit">시작</button> 
-        </form>
+    <div id="intro" onclick="goToMenu()">
+        <img src="{{ url_for('static', filename='images/c.png') }}" alt="로고">
     </div>
+
+    <script>
+        function goToMenu() {
+            window.location.href = "{{ url_for('menu') }}";
+        }
+    </script>
 </body>
 </html>

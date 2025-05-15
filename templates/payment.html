@@ -7,9 +7,9 @@
 <body>
     <h1>결제 화면</h1>
     <ul>
-        {% for item in order %}
-            <li>{{ item.name }} - {{ item.count }}개 - {{ item.count * item.price }}원</li>
-        {% endfor %}
+         {% for item in order %}
+            <li>{{ item.name }} ({{ item.options }}) - {{ item.count }}개 - {{ item.count * item.price }}원</li>
+         {% endfor %}
     </ul>
     <p><strong>총액: {{ total }}원</strong></p>
     <button onclick="alert('결제가 완료되었습니다!')">결제 완료</button>
