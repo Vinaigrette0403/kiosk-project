@@ -28,17 +28,17 @@ def payment():
     if request.method == 'POST':
         data = request.get_json()
         session['order'] = data.get('order', [])
-        return redirect(url_for('payment'))  # POST → redirect to GET
-    else:
+        return '', 204  # 비어 있는 응답
+
+    else:  # GET
         order = session.get('order', [])
         total = sum(item['count'] * item['price'] for item in order)
         return render_template('payment.html', order=order, total=total)
 
-@app.route('/finish_payment')
+@app.route('/finish_payment', methods=['POST'])
 def finish_payment():
-    session.pop('cart', None)
-    session.pop('total_price', None)
-    return redirect(url_for('index'))
+    session.pop('order', None)
+    return "<h2>결제가 완료되었습니다!</h2>"
 
 if __name__ == '__main__':
     app.run(debug=True)

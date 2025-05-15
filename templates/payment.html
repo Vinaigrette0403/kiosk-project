@@ -2,16 +2,19 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>결제</title>
+    <title>최종 결제 확인</title>
 </head>
 <body>
-    <h1>결제 화면</h1>
+    <h1>결제 내역 확인</h1>
     <ul>
-         {% for item in order %}
-            <li>{{ item.name }} ({{ item.options }}) - {{ item.count }}개 - {{ item.count * item.price }}원</li>
-         {% endfor %}
+        {% for item in order %}
+            <li>{{ item.name }} - {{ item.count }}개 - {{ item.count * item.price }}원</li>
+        {% endfor %}
     </ul>
-    <p><strong>총액: {{ total }}원</strong></p>
-    <button onclick="alert('결제가 완료되었습니다!')">결제 완료</button>
+    <p><strong>총 결제 금액: {{ total }}원</strong></p>
+
+    <form action="/finish_payment" method="post">
+        <button type="submit">결제 완료</button>
+    </form>
 </body>
 </html>

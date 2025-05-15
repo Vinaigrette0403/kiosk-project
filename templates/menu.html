@@ -302,7 +302,30 @@
     }
 
     function checkout() {
-        alert('결제는 준비 중입니다.');
+        const orderItems = [];
+        const cartList = document.querySelectorAll('#cart-items li');
+
+        cartList.forEach(li => {
+            const text = li.textContent;
+            const name = text.split('(')[0].trim();
+            const count = parseInt(li.querySelector('.item-qty').textContent);
+            const priceText = li.querySelector('.item-price')?.textContent.replace("원", "") || "0";
+            const price = parseInt(priceText);
+
+            orderItems.push({
+                name: name,
+                count: count,
+             price: price
+            });
+         });
+
+        fetch("/payment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ order: orderItems })
+        }).then(() => {
+            window.location.href = "/payment";
+        });
     }
     // 요청사항: '없음' 체크 해제 & 자동 선택
     document.querySelectorAll('#requests .req-option').forEach(cb => {
