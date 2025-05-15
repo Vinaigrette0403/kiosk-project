@@ -3,105 +3,274 @@
 <head>
     <meta charset="UTF-8">
     <title>음료 메뉴</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
+        body {
+            text-align: center;
+            background-color: #f8f8f8;
+            font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            margin-top: 40px;
+            font-size: 2.5em;
+        }
         .menu-container {
             display: flex;
-            flex-wrap: wrap;
             justify-content: center;
-            gap: 20px;
-            max-width: 900px;
-            margin: 0 auto;
+            flex-wrap: wrap;
+            margin: 30px;
         }
         .menu-item {
-            width: 220px;
-            background: white;
-            border-radius: 15px;
-            padding: 15px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            text-align: center;
+            background-color: white;
+            border: 2px solid #ccc;
+            border-radius: 20px;
+            margin: 20px;
+            padding: 20px;
+            width: 200px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        .menu-item:hover {
+            transform: scale(1.05);
+            border-color: #007bff;
         }
         .menu-item img {
-            width: 100%;
-            height: 150px;
+            width: 200px;
+            height: 200px;
             object-fit: cover;
             border-radius: 10px;
         }
-        .controls {
+        .menu-item h3 {
             margin-top: 10px;
+            font-size: 1.2em;
         }
-        .controls button {
-            margin: 0 5px;
+        .menu-item button {
+            background-color: #009688;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
         #cart {
-            margin-top: 40px;
-            text-align: center;
+            background-color: #fff;
+            border-top: 2px solid #ccc;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        #cart-items li {
+            list-style: none;
+            margin: 10px 0;
+        }
+        #cart-items button {
+            margin: 0 3px;
+        }
+        #checkout-btn {
+            background-color: #009688;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        #option-modal {
+            display: none;
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            z-index: 999;
         }
     </style>
-    <script>
-        const cart = {};
-        const menuItems = {{ menu_items | tojson }};  // 가격 정보를 JavaScript로 전달
-
-        function addToCart(item) {
-            if (!cart[item]) cart[item] = 0;
-            cart[item]++;
-            updateCart();
-        }
-
-        function increase(item) {
-            cart[item]++;
-            updateCart();
-        }
-
-        function decrease(item) {
-            if (cart[item] > 0) cart[item]--;
-            updateCart();
-        }
-
-        function updateCart() {
-            let html = '';
-            let total = 0;
-            for (const item in cart) {
-                if (cart[item] > 0) {
-                    html += `<p>${item}: ${cart[item]} 
-                        <button onclick="increase('${item}')">+</button> 
-                        <button onclick="decrease('${item}')">-</button></p>`;
-                    total += menuItems[item] * cart[item];
-                }
-            }
-            document.getElementById('cart-items').innerHTML = html;
-            document.getElementById('cartData').value = JSON.stringify(cart);
-            document.getElementById('total-price').innerText = `총액: ${total}원`;
-        }
-
-        function submitForm() {
-            document.getElementById('cart-form').submit();
-        }
-    </script>
 </head>
 <body>
     <h1>음료를 선택하세요</h1>
     <div class="menu-container">
-        {% for item, price in menu_items.items() %}
         <div class="menu-item">
-            <img src="{{ url_for('static', filename='images/' + item|replace('아메리카노','americano')|replace('카페라떼','latte')|replace('초코라떼','choco')|replace('녹차라떼','green')|replace('딸기라떼','strawberry')|replace('바닐라라떼','vanilla') + ('.jpg' if item in ['아메리카노', '카페라떼'] else '.jpeg')) }}" alt="{{ item }}">
-            <h3>{{ item }}</h3>
-            <p>가격: {{ price }}원</p>
-            <div class="controls">
-                <button onclick="addToCart('{{ item }}')">선택</button>
-            </div>
+            <img src="{{ url_for('static', filename='images/americano.jpg') }}" alt="아메리카노">
+            <h3>아메리카노</h3>
+            <p>가격: 2000원</p>
+            <button onclick="openOptions('아메리카노', 2000)">선택</button>
         </div>
-        {% endfor %}
+        <div class="menu-item">
+            <img src="{{ url_for('static', filename='images/latte.jpg') }}" alt="카페라떼">
+            <h3>카페라떼</h3>
+            <p>가격: 3000원</p>
+            <button onclick="openOptions('카페라떼', 3000)">선택</button>
+        </div>
+        <div class="menu-item">
+            <img src="{{ url_for('static', filename='images/choco.jpeg') }}" alt="초코라떼">
+            <h3>초코라떼</h3>
+            <p>가격: 4500원</p>
+            <button onclick="openOptions('초코라떼', 4500)">선택</button>
+        </div>
+        <div class="menu-item">
+            <img src="{{ url_for('static', filename='images/green.jpeg') }}" alt="녹차라떼">
+            <h3>녹차라떼</h3>
+            <p>가격: 4000원</p>
+            <button onclick="openOptions('녹차라떼', 4000)">선택</button>
+        </div>
+        <div class="menu-item">
+            <img src="{{ url_for('static', filename='images/strawberry.jpeg') }}" alt="딸기라떼">
+            <h3>딸기라떼</h3>
+            <p>가격: 4500원</p>
+            <button onclick="openOptions('딸기라떼', 4500)">선택</button>
+        </div>
+        <div class="menu-item">
+            <img src="{{ url_for('static', filename='images/vanilla.jpeg') }}" alt="바닐라라떼">
+            <h3>바닐라라떼</h3>
+            <p>가격: 3500원</p>
+            <button onclick="openOptions('바닐라라떼', 3500)">선택</button>
+        </div>
     </div>
 
     <div id="cart">
-        <h2>🛒 장바구니</h2>
-        <div id="cart-items"></div>
-        <p id="total-price">총액: 0원</p>
-        <form id="cart-form" action="{{ url_for('payment') }}" method="post">
-            <input type="hidden" name="cartData" id="cartData">
-            <button type="button" onclick="submitForm()">결제하기</button>
-        </form>
+        <h2>
+            <img src="{{ url_for('static', filename='images/cart.jpg') }}" alt="장바구니" style="width:24px; vertical-align:middle; margin-right:5px;">
+            장바구니
+        </h2>
+        <ul id="cart-items"></ul>
+        <p>총액: <span id="total">0</span>원</p>
+        <button id="checkout-btn" onclick="checkout()">결제하기</button>
     </div>
+
+    <!-- 옵션 선택 모달 -->
+    <div id="option-modal">
+        <h3 id="modal-title">옵션 선택</h3>
+
+        <p><strong>사이즈:</strong></p>
+        <label><input type="radio" name="size" value="스몰" checked> 스몰</label>
+        <label><input type="radio" name="size" value="라지"> 라지 (+1000원)</label>
+
+        <p><strong>시럽:</strong></p>
+        <select id="syrup-select">
+            <option value="없음" data-price="0">없음</option>
+            <option value="바닐라" data-price="500">바닐라 (+500원)</option>
+            <option value="헤이즐넛" data-price="500">헤이즐넛 (+500원)</option>
+        </select>
+
+        <p><strong>수량:</strong>
+            <button onclick="changeOptionCount(1)">+</button>
+            <span id="option-count">1</span>
+            <button onclick="changeOptionCount(-1)">-</button>
+        </p>
+
+        <button onclick="confirmOptions()">추가하기</button>
+        <button onclick="closeModal()">취소</button>
+    </div>
+
+    <script>
+        const cart = {};
+        const deleteIcon = "{{ url_for('static', filename='images/x.jpg') }}";
+
+        function openOptions(item, price) {
+            currentItem = item;
+            currentPrice = price;
+            document.getElementById('modal-title').innerText = `${item} 옵션 선택`;
+            document.getElementById('option-count').innerText = "1";
+            document.querySelector('input[name="size"][value="스몰"]').checked = true;
+            document.getElementById('syrup-select').value = "없음";
+            document.getElementById('option-modal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('option-modal').style.display = 'none';
+        }
+
+        let currentItem = "";
+        let currentPrice = 0;
+
+        function changeOptionCount(delta) {
+            const countSpan = document.getElementById('option-count');
+            let count = parseInt(countSpan.innerText);
+            count = Math.max(1, count + delta);
+            countSpan.innerText = count;
+        }
+
+        function confirmOptions() {
+            const size = document.querySelector('input[name="size"]:checked').value;
+            const syrupOption = document.getElementById('syrup-select');
+            const syrup = syrupOption.value;
+            const syrupPrice = parseInt(syrupOption.selectedOptions[0].dataset.price);
+            const count = parseInt(document.getElementById('option-count').innerText);
+
+            const finalItem = `${currentItem} (${size}, ${syrup})`;
+            const finalPrice = currentPrice + (size === "라지" ? 1000 : 0) + syrupPrice;
+
+            if (!cart[finalItem]) {
+                cart[finalItem] = { count, price: finalPrice };
+            } else {
+                cart[finalItem].count += count;
+            }
+
+            closeModal();
+            updateCart();
+        }
+
+        function updateCart() {
+            const cartItems = document.getElementById('cart-items');
+            const totalDisplay = document.getElementById('total');
+            cartItems.innerHTML = '';
+            let total = 0;
+
+            for (const [item, data] of Object.entries(cart)) {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <img src="${deleteIcon}" onclick="removeItem('${item}')" style="width:18px; cursor:pointer; vertical-align:middle; margin-right:5px;">
+                    ${item}: ${data.count}
+                    <button onclick="changeCount('${item}', 1)">+</button>
+                    <button onclick="changeCount('${item}', -1)">-</button>
+                    <span> ${data.price}원</span>
+                `;
+                cartItems.appendChild(li);
+                total += data.count * data.price;
+            }
+            totalDisplay.innerText = total;
+        }
+
+        function changeCount(item, delta) {
+            cart[item].count += delta;
+            if (cart[item].count <= 0) {
+                delete cart[item];
+            }
+            updateCart();
+        }
+
+        function removeItem(item) {
+            delete cart[item];
+            updateCart();
+        }
+
+        function checkout() {
+            const orderData = [];
+
+            for (const [item, data] of Object.entries(cart)) {
+                if (data.count > 0) {
+                    orderData.push({
+                        name: item,
+                        count: data.count,
+                        price: data.price
+                    });
+                }
+            }
+
+            fetch("/payment", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ order: orderData })
+            })
+            .then(response => response.redirected ? window.location.href = response.url : null)
+            .catch(error => console.error("Error during checkout:", error));
+        }
+    </script>
 </body>
 </html>

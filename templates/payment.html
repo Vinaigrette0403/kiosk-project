@@ -2,26 +2,16 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>결제 페이지</title>
+    <title>결제</title>
 </head>
 <body>
-    <h1>결제 페이지</h1>
-    <h2>장바구니</h2>
-
-    {% if cart_data %}
-        <ul>
-        {% for item, quantity in cart_data.items() %}
-            {% if quantity > 0 %}  <!-- 수량이 0보다 큰 경우에만 출력 -->
-                <li>{{ item }} - 수량: {{ quantity }} - 가격: {{ menu_items.get(item, 0) * quantity }}원</li>
-            {% endif %}
+    <h1>결제 화면</h1>
+    <ul>
+        {% for item in order %}
+            <li>{{ item.name }} - {{ item.count }}개 - {{ item.count * item.price }}원</li>
         {% endfor %}
-        </ul>
-        <h3>총액: {{ total_price }}원</h3>
-        <form action="{{ url_for('finish_payment') }}" method="get">
-            <button type="submit">결제 완료</button>
-        </form>
-    {% else %}
-        <p>장바구니가 비어 있습니다.</p>
-    {% endif %}
+    </ul>
+    <p><strong>총액: {{ total }}원</strong></p>
+    <button onclick="alert('결제가 완료되었습니다!')">결제 완료</button>
 </body>
 </html>
