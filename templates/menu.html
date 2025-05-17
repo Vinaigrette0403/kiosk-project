@@ -1,370 +1,336 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>음료메뉴</title>
-    <style>
-        body {
-            text-align: center;
-            background-color: #f8f8f8;
-            font-family: sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        h1 {
-            margin-top: 40px;
-            font-size: 2.5em;
-        }
-        .menu-container {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 30px;
-        }
-        .menu-item {
-            background-color: white;
-            border: 2px solid #ccc;
-            border-radius: 20px;
-            margin: 20px;
-            padding: 20px;
-            width: 200px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s;
-        }
-        .menu-item:hover {
-            transform: scale(1.05);
-            border-color: #007bff;
-        }
-        .menu-item img {
-            width: 200px;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 10px;
-        }
-        .menu-item h3 {
-            margin-top: 10px;
-            font-size: 1.2em;
-        }
-        .menu-item p {
-            margin: 5px 0;
-        }
-        #cart {
-            background-color: #fff;
-            border-top: 2px solid #ccc;
-            padding: 20px;
-            margin-top: 30px;
-        }
-        #cart-items li {
-            list-style: none;
-            margin: 10px 0;
-        }
-        #cart-items button {
-            margin-left: 5px;
-        }
-        #checkout-btn {
-            background-color: #009688;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 15px;
-        }
-        .option-modal {
-            display: none;
-            position: fixed;
-            top: 5%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: white;
-            width: 600px;
-            height: 550px;
-            padding: 30px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.3);
-            border-radius: 20px;
-            overflow-y: auto;
-            z-index: 1000;
-            font-size: 18px;
-        }
-        .option-section {
-            margin-top: 20px;
-        }
-        .option-section h3 {
-            margin-bottom: 10px;
-            color: #333;
-        }
-        .options {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .options label {
-            background: #eee;
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .footer {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-        }
-        .footer button {
-            padding: 12px 24px;
-            font-size: 18px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        .cancel-btn {
-            background-color: #ccc;
-        }
-        .confirm-btn {
-            background-color: #009688;
-            color: white;
-        }
-        .item-price {
-            margin-left: 10px;
-            font-weight: bold;
-            color: #444;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>키오스크 메뉴</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      height: 100vh;
+      background-color: #f2f2f2;
+    }
+    .menu-container {
+      width: 70%;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    .menu-item {
+      background: white;
+      width: 220px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      padding: 15px;
+      text-align: center;
+    }
+    .menu-item img {
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .qty-btn {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      margin: 0 2px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .delete-btn {
+      background-color: #f44336;  /* 빨간색 */
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #cart {
+      width: 30%;
+      background-color: #fff;
+      border-left: 2px solid #ddd;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    #cart h2 {
+      text-align: left;
+    }
+    #cart-items {
+      flex: 1;
+      overflow-y: auto;
+      text-align: left;
+    }
+    #cart-items li {
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+    }
+    #checkout-btn {
+      background-color: #4caf50;
+      color: white;
+      padding: 20px;
+      font-size: 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    .option-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+    }
+    .option-content {
+      background-color: #ffffff;
+      width: 600px;
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+      font-size: 24px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    }
+    .option-content button {
+     width: 45%;
+     padding: 20px 0;
+     font-size: 20px;
+     margin: 20px 10px 0 10px;
+     border-radius: 15px;
+     border: none;
+     cursor: pointer;
+    font-weight: bold;
+    }
+
+    .option-section {
+      margin: 20px 0;
+    }
+    .options label {
+      display: inline-block;
+      margin: 10px;
+      padding: 20px 40px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .options input {
+      display: none;
+    }
+    .options input:checked + label {
+      border-color: #007bff;
+      background-color: #e3f2fd;
+    }
+  </style>
 </head>
 <body>
-    <h1>음료를 선택하세요</h1>
-    <div class="menu-container">
-        <div class="menu-item" onclick="openOptionModal('아메리카노',2000)">
-            <img src="{{ url_for('static', filename='images/americano.jpg') }}" alt="아메리카노">
-            <h3>아메리카노</h3>
-            <p>가격: 2000원</p>
-        </div>
-        <div class="menu-item" onclick="openOptionModal('카페라떼',3000)">
-            <img src="{{ url_for('static', filename='images/latte.jpg') }}" alt="카페라떼">
-            <h3>카페라떼</h3>
-            <p>가격: 3000원</p>
-        </div>
-        <div class="menu-item" onclick="openOptionModal('초코라떼',4500)">
-            <img src="{{ url_for('static', filename='images/choco.jpeg') }}" alt="카페라떼">
-            <h3>초코라떼</h3>
-            <p>가격: 4500원</p>
-        </div>
+  <div class="menu-container">
+    <div class="menu-item" onclick="openOptionModal('아메리카노', 2000)">
+      <img src="{{ url_for('static', filename='images/americano.jpg') }}" />
+      <h3>아메리카노(2,000원)</h3>
+    </div>
+    <div class="menu-item" onclick="openOptionModal('카페라떼', 3000)">
+      <img src="{{ url_for('static', filename='images/latte.jpg') }}" />
+      <h3>카페라떼(3,000원)</h3>
+    </div>
+    <div class="menu-item" onclick="openOptionModal('초코라떼',4500)">
+        <img src="{{ url_for('static', filename='images/choco.jpeg') }}">
+        <h3>초코라떼(4,500원)</h3>
+    </div>        
+        <div class="menu-item" onclick="openOptionModal('카라멜 마끼아또',5000)">
+        <img src="{{ url_for('static', filename='images/caramel.jpeg') }}">
+        <h3>카라멜 마끼아또(5,000원)</h3>   
+    </div>
         <div class="menu-item" onclick="openOptionModal('녹차라떼',4000)">
-            <img src="{{ url_for('static', filename='images/green.jpeg') }}" alt="카페라떼">
-            <h3>녹차라떼</h3>
-            <p>가격: 4000원</p>
-        </div>
-        <div class="menu-item" onclick="openOptionModal('딸기라떼',4500)">
-            <img src="{{ url_for('static', filename='images/strawberry.jpeg') }}" alt="카페라떼">
-            <h3>딸기라떼</h3>
-            <p>가격: 4500원</p>
-        </div>
+        <img src="{{ url_for('static', filename='images/green.jpeg') }}">
+        <h3>녹차라떼(4,000원)</h3>
+    </div>
+        <div class="menu-item" onclick="openOptionModal('딸기라떼',5000)">
+        <img src="{{ url_for('static', filename='images/strawberry.jpeg') }}">
+        <h3>딸기라떼(5,000원)</h3>
+    </div>
         <div class="menu-item" onclick="openOptionModal('바닐라라떼',3500)">
-            <img src="{{ url_for('static', filename='images/vanilla.jpeg') }}" alt="카페라떼">
-            <h3>바닐라라떼</h3>
-            <p>가격: 3500원</p>
-        </div>
-
-
-        
+        <img src="{{ url_for('static', filename='images/vanilla.jpeg') }}">
+        <h3>바닐라라떼(3,500원)</h3>
     </div>
+    
+  </div>
 
-    <div id="cart">
-        <h2><img src="{{ url_for('static', filename='images/cart.jpg') }}" alt="장바구니" style="width: 24px;"></h2>
-        <ul id="cart-items"></ul>
-        <p>총액: <span id="total">0</span>원</p>
-        <button id="checkout-btn" onclick="checkout()">결제하기</button>
+  <div id="cart">
+    <h2>장바구니</h2>
+    <ul id="cart-items"></ul>
+    <p>총액: <span id="total">0</span>원</p>
+    <button id="checkout-btn" onclick="checkout()">결제하기</button>
+  </div>
+
+  <div class="option-modal" id="optionModal">
+    <div class="option-content">
+      <h2 id="optionTitle"></h2>
+      <p>옵션을 선택해주세요</p>
+
+      <div class="option-section">
+         <h3>온도 <span style="color: red; font-size: 0.8em;">(필수 선택)</span></h3>
+        <div class="options">
+          <input type="radio" id="ice" name="temp" value="ICE" /><label for="ice">ICE</label>
+          <input type="radio" id="hot" name="temp" value="HOT" /><label for="hot">HOT</label>
+        </div>
+      </div>
+      <div class="option-section" id="requests">
+        <h3>요청사항</h3>
+        <div class="options">
+          <input type="checkbox" id="req1" class="req-option" value="없음" checked><label for="req1">없음</label>
+          <input type="checkbox" id="req2" class="req-option" value="얼음 적게"><label for="req2">얼음 적게</label>
+          <input type="checkbox" id="req3" class="req-option" value="연하게"><label for="req3">연하게</label>
+        </div>
+      </div>
+
+      <div class="option-section" id="adds">
+        <h3>추가 옵션 (+500원)</h3>
+        <div class="options">
+          <input type="checkbox" id="add1" class="add-option" value="없음" data-price="0" checked><label for="add1">없음</label>
+          <input type="checkbox" id="add2" class="add-option" data-price="500"><label for="add2">샷 추가</label>
+          <input type="checkbox" id="add3" class="add-option" data-price="500"><label for="add3">휘핑 추가</label>
+          <input type="checkbox" id="add4" class="add-option" data-price="500"><label for="add4">바닐라 시럽</label>
+        </div>
+      </div>
+
+      <button onclick="addToCart()">주문담기</button>
+      <button onclick="closeOptionModal()">취소</button>
     </div>
-
-    <div class="option-modal" id="optionModal">
-        <h2 id="optionTitle">선택한 음료</h2>
-        <p>선택하신 상품의 옵션을 모두 선택해주세요.</p>
-
-        <div class="option-section">
-            <h3>온도 선택</h3>
-            <div class="options">
-                <label><input type="radio" name="temp" value="ICE"> ICE</label>
-                <label><input type="radio" name="temp" value="HOT"> HOT</label>
-            </div>
-        </div>
-
-        <div class="option-section" id="requests">
-            <h3>요청사항</h3>
-            <div class="options">
-                <label><input type="checkbox" class="req-option" value="없음" checked>없음</label>
-                <label><input type="checkbox" class="req-option" value="얼음 적게">얼음 적게</label>
-                <label><input type="checkbox" class="req-option" value="우유 조금">우유 조금</label>
-                <label><input type="checkbox" class="req-option" value="연하게">연하게</label>
-                <label><input type="checkbox" class="req-option" value="덜달게게">덜달게</label>
-            </div>
-        </div>
-
-        <div class="option-section" id="adds">
-            <h3>추가 옵션 (각 +500)</h3>
-            <div class="options">
-                <label><input type="checkbox" class ="add-option" value="없음" checked>없음</label>
-                <label><input type="checkbox" class ="add-option" data-price="500"> 샷 추가</label>
-                <label><input type="checkbox" class ="add-option" data-price="500"> 휘핑 추가</label>
-                <label><input type="checkbox" class ="add-option" data-price="500"> 바닐라 시럽</label>
-            </div>
-        </div>
-
-        <div class="footer">
-            <button class="cancel-btn" onclick="closeOptionModal()">취소</button>
-            <button class="confirm-btn" onclick="addToCart()">주문담기</button>
-        </div>
-    </div>
-
+  </div>
 <script>
-    let total = 0;
-    let selectedItem = { name: '', price: 0 };
+  let selectedItem = { name: '', price: 0 };
 
-    function openOptionModal(name, price) {
-        selectedItem = { name, price };
-        document.getElementById('optionTitle').innerText = name;
-        document.getElementById('optionModal').style.display = 'block';
+  function openOptionModal(name, price) {
+    selectedItem = { name, price };
+    document.getElementById('optionTitle').innerText = name;
+    document.querySelectorAll('input').forEach(input => input.checked = false);
+    document.querySelector('#req1').checked = true;
+    document.querySelector('#add1').checked = true;
+    document.getElementById('optionModal').style.display = 'flex';
+  }
+
+  function closeOptionModal() {
+    document.getElementById('optionModal').style.display = 'none';
+  }
+
+  function addToCart() {
+    const temp = document.querySelector('input[name="temp"]:checked');
+    if (!temp) {
+        alert('음료 온도를 선택해주세요.');
+        return;
     }
+    const tempVal = temp ? temp.value : '';
 
-    function closeOptionModal() {
-        document.getElementById('optionModal').style.display = 'none';
-    }
+    const reqs = Array.from(document.querySelectorAll('.req-option:checked')).map(cb => cb.value);
+    const adds = Array.from(document.querySelectorAll('.add-option:checked')).map(cb => cb.nextElementSibling.innerText);
 
-    function addToCart() {
-        const name = document.getElementById('optionTitle').innerText;
-        const basePrice = selectedItem.price;
+    let extra = 0;
+    document.querySelectorAll('.add-option:checked').forEach(cb => {
+      extra += parseInt(cb.dataset.price || "0");
+    });
 
-        const temp = document.querySelector('input[name="temp"]:checked');
-        const tempVal = temp ? temp.value : '';
+    const finalPrice = selectedItem.price + extra;
+    const optionsSummary = [tempVal, ...reqs, ...adds].filter(Boolean).join(', ');
 
-        const reqs = Array.from(document.querySelectorAll('.option-section:nth-child(4) input:checked'))
-                          .map(cb => cb.parentElement.textContent.trim());
+    const li = document.createElement('li');
+    li.dataset.price = finalPrice;
+    li.dataset.count = 1;
+    li.innerHTML = `
+        ${selectedItem.name} (${optionsSummary}) -
+        <span class="item-qty">1</span>개
+        <button class="qty-btn" onclick="changeQty(this, 1)">+</button>
+        <button class="qty-btn" onclick="changeQty(this, -1)">-</button>
+        <span class="item-subtotal">${finalPrice}원</span>
+        <button class="delete-btn" onclick="this.parentElement.remove(); updateTotal();">삭제</button>
+    `;
+    document.getElementById('cart-items').appendChild(li);
 
-        const adds = [];
-        let extra = 0;
-        const addCheckboxes = document.querySelectorAll('#adds input:checked');
-        addCheckboxes.forEach(cb => {
-            const label = cb.parentElement.textContent.trim();
-            const price = parseInt(cb.dataset.price || "0");
-            adds.push(label);
-            extra += price;
+    updateTotal();
+    closeOptionModal();
+  }
+  function checkout() {
+    const orderItems = [];
+     document.querySelectorAll('#cart-items li').forEach(li => {
+        orderItems.push({
+            name: li.dataset.name,
+            count: parseInt(li.dataset.count),
+            price: parseInt(li.dataset.price)
         });
+    });
 
-        const finalPrice = basePrice + extra;
-        const optionsSummary = [tempVal, ...reqs, ...adds].filter(Boolean).join(', ');
+    fetch("/payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ order: orderItems })
+    }).then(() => {
+        window.location.href = "/payment";
+    });
+  }
 
-        const li = document.createElement('li');
-        const quantity = 1;
+  // '없음' 자동 처리 - 요청사항
+  document.querySelectorAll('#requests .req-option').forEach(cb => {
+    cb.addEventListener('change', () => {
+      const all = [...document.querySelectorAll('#requests .req-option')];
+      const none = all.find(e => e.value === "없음");
+      if (cb.value === "없음" && cb.checked) {
+        all.forEach(e => { if (e !== none) e.checked = false; });
+      } else {
+        none.checked = false;
+      }
+      if (!all.some(e => e.checked)) none.checked = true;
+    });
+  });
 
-       li.innerHTML = `
-            <img src="{{ url_for('static', filename='images/x.jpg') }}"
-                style="width: 20px; cursor: pointer;"
-                onclick="removeItem(this, ${finalPrice})">
-            ${name} (${optionsSummary}) :
-            <span class="item-qty">${quantity}</span>
-            <button onclick="changeQuantity(this, ${finalPrice}, 1)">+</button>
-            <button onclick="changeQuantity(this, ${finalPrice}, -1)">-</button>
-            <span class="item-price">${finalPrice * quantity}원</span>
-        `;
-
-        document.getElementById('cart-items').appendChild(li);
-        total += finalPrice;
-        document.getElementById('total').textContent = total;
-
-        closeOptionModal();
-    }
-
-    function changeQuantity(button, price, delta) {
-        const li = button.parentElement;
+  // '없음' 자동 처리 - 추가 옵션
+  document.querySelectorAll('#adds .add-option').forEach(cb => {
+    cb.addEventListener('change', () => {
+      const all = [...document.querySelectorAll('#adds .add-option')];
+      const none = document.querySelector('#add1');
+      if (cb === none && cb.checked) {
+        all.forEach(e => { if (e !== none) e.checked = false; });
+      } else {
+        none.checked = false;
+      }
+      if (!all.some(e => e.checked)) none.checked = true;
+    });
+  });
+    function changeQty(btn, delta) {
+        const li = btn.parentElement;
         const qtySpan = li.querySelector('.item-qty');
-        let qty = parseInt(qtySpan.textContent);
-
-        if (qty + delta <= 0) return;
-
-        qty += delta;
-        qtySpan.textContent = qty;
-
-        total += price * delta;
-        document.getElementById('total').textContent = total;
-
-        const priceSpan = li.querySelector('.item-price');
-        priceSpan.textContent = (qty * price) + '원';
+        let count = parseInt(qtySpan.textContent) + delta;
+        if (count <= 0) {
+            li.remove();
+            updateTotal();
+            return;
+        };
+        qtySpan.textContent = count;
+        li.dataset.count = count;
+        li.querySelector('.item-subtotal').innerText = (parseInt(li.dataset.price) * count) + "원";
+        updateTotal();
     }
 
-    function removeItem(button, price) {
-        const li = button.parentElement;
-        const qty = parseInt(li.querySelector('.item-qty').textContent);
-        total -= price * qty;
-        document.getElementById('total').textContent = total;
-        li.remove();
+    function updateTotal() {
+        let total = 0;
+        document.querySelectorAll('#cart-items li').forEach(li => {
+            total += parseInt(li.dataset.price) * parseInt(li.dataset.count);
+        });
+         document.getElementById('total').innerText = total;
     }
-
-    function checkout() {
-        const orderItems = [];
-        const cartList = document.querySelectorAll('#cart-items li');
-
-        cartList.forEach(li => {
-            const text = li.textContent;
-            const name = text.split('(')[0].trim();
-            const count = parseInt(li.querySelector('.item-qty').textContent);
-            const priceText = li.querySelector('.item-price')?.textContent.replace("원", "") || "0";
-            const price = parseInt(priceText);
-
-            orderItems.push({
-                name: name,
-                count: count,
-             price: price
-            });
-         });
-
-        fetch("/payment", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ order: orderItems })
-        }).then(() => {
-            window.location.href = "/payment";
-        });
-    }
-    // 요청사항: '없음' 체크 해제 & 자동 선택
-    document.querySelectorAll('#requests .req-option').forEach(cb => {
-        cb.addEventListener('change', () => {
-            const all = Array.from(document.querySelectorAll('#requests .req-option'));
-            const noneOption = all.find(e => e.value === "없음");
-
-            if (cb.value === "없음" && cb.checked) {
-                all.forEach(e => { if (e !== noneOption) e.checked = false; });
-            } else {
-                noneOption.checked = false;
-            }
-
-            if (!all.some(e => e.checked)) {
-                noneOption.checked = true;
-            }
-        });
-    });
-
-// 추가옵션: '없음' 체크 해제 & 자동 선택
-    document.querySelectorAll('#adds .add-option').forEach(cb => {
-        cb.addEventListener('change', () => {
-            const all = Array.from(document.querySelectorAll('#adds .add-option'));
-            const noneOption = all.find(e => e.value === "없음");
-
-            if (cb.value === "없음" && cb.checked) {
-                all.forEach(e => { if (e !== noneOption) e.checked = false; });
-            } else {
-                noneOption.checked = false;
-            }
-
-            if (!all.some(e => e.checked)) {
-                noneOption.checked = true;
-            }
-        });
-    });
-
-
 </script>
-
 </body>
 </html>
