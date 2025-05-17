@@ -37,8 +37,8 @@ def payment():
 
 @app.route('/finish_payment', methods=['POST'])
 def finish_payment():
-    session.pop('order', None)
-    return "<h2>결제가 완료되었습니다!</h2>"
+    session.pop('order', None)  # 장바구니 초기화
+    return redirect('/')        # 초기 메뉴화면으로 이동
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -222,6 +222,24 @@
     document.querySelector('#req1').checked = true;
     document.querySelector('#add1').checked = true;
     document.getElementById('optionModal').style.display = 'flex';
+
+    const hotInput = document.querySelector("#hot");
+    const hotLabel = document.querySelector("label[for='hot']");
+
+    const iceOnlyItems = ['딸기라떼'];  // ICE 전용 음료들
+
+    if (iceOnlyItems.includes(name)) {
+        hotInput.style.visibility = "hidden";
+        hotInput.style.position = "absolute";
+        hotLabel.style.visibility = "hidden";
+        hotLabel.style.position = "absolute";
+        hotInput.checked = false;
+    } else {
+         hotInput.style.visibility = "visible";
+        hotInput.style.position = "static";
+        hotLabel.style.visibility = "visible";
+        hotLabel.style.position = "static";
+    }
   }
 
   function closeOptionModal() {
@@ -248,8 +266,10 @@
     const optionsSummary = [tempVal, ...reqs, ...adds].filter(Boolean).join(', ');
 
     const li = document.createElement('li');
+    li.dataset.name = selectedItem.name;
     li.dataset.price = finalPrice;
     li.dataset.count = 1;
+    li.dataset.options = optionsSummary;
     li.innerHTML = `
         ${selectedItem.name} (${optionsSummary}) -
         <span class="item-qty">1</span>개
@@ -268,6 +288,7 @@
      document.querySelectorAll('#cart-items li').forEach(li => {
         orderItems.push({
             name: li.dataset.name,
+            options: li.dataset.options,
             count: parseInt(li.dataset.count),
             price: parseInt(li.dataset.price)
         });
