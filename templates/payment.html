@@ -5,79 +5,209 @@
   <title>결제 확인</title>
   <style>
     body {
-      font-family: 'Arial', sans-serif;
       margin: 0;
-      padding: 40px 20px;
-      background-color: #f2f2f2;
+      padding: 0;
+      background-color: #fff;
+      font-family: 'Arial', sans-serif;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      min-height: 100vh;
     }
 
-    h1 {
-      font-size: 28px;
-      margin-bottom: 30px;
+    .header {
+      background-color: #00cc66;
+      color: white;
+      font-size: 26px;
+      font-weight: bold;
+      text-align: center;
+      padding: 20px 10px;
     }
 
     .order-list {
-      width: 100%;
-      max-width: 500px;
+      flex: 1;
+      padding: 20px 40px;
+      font-size: 24px;
     }
 
-    .order-item {
-      background-color: white;
-      padding: 20px;
-      margin-bottom: 15px;
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      font-size: 18px;
+    .order-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .order-table th, .order-table td {
+      border-bottom: 1px solid #ddd;
+      padding: 15px 10px;
       text-align: left;
     }
 
-    .total {
-      font-size: 22px;
+    .summary {
+      text-align: center;
+      font-size: 26px;
       font-weight: bold;
-      margin: 30px 0;
+      margin: 20px 0;
+      color: #333;
+    }
+
+    .highlight {
+      color: red;
+      font-weight: bold;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      padding: 20px 0;
+      background-color: #fff;
+    }
+
+    .button-group button {
+      font-size: 28px;
+      padding: 20px 60px;
+      border: none;
+      cursor: pointer;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .back-btn {
+      background-color: #000;
+      color: white;
+    }
+
+    .pay-btn {
+      background-color: #00cc66;
+      color: white;
+    }
+
+    /* 카드 결제 모달 */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 30px;
+      width: 500px;
+      border-radius: 20px;
       text-align: center;
     }
 
-    .confirm-btn {
-      background-color: #4caf50;
-      color: white;
-      font-size: 20px;
-      padding: 15px 40px;
+    .modal-content img {
+      width: 150px;
+      margin-bottom: 20px;
+    }
+
+    .modal-content .amount {
+      font-size: 26px;
+      margin-bottom: 20px;
+      color: red;
+    }
+
+    .modal-content .btns {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .modal-content .btns button {
+      flex: 1;
+      font-size: 24px;
+      padding: 15px;
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      transition: background-color 0.2s ease;
     }
 
-    .confirm-btn:hover {
-      background-color: #45a049;
+    .cancel-btn {
+      background-color: #555;
+      color: white;
     }
+
+    .confirm-btn {
+      background-color: #ff6600;
+      color: white;
+    }
+
   </style>
 </head>
 <body>
-  <h1>결제 내역을 확인해주세요</h1>
+
+  <div class="header">주문 세부내역을 다시 한번 확인하여 주세요</div>
 
   <div class="order-list">
-    {% for item in order %}
-      <div class="order-item">
-        {{ item.name }}
-        {% if item.options %}
-            ({{ item.options }})
-        {% endif %}
-    <br>
-    수량: {{ item.count }}개<br>
-    금액: {{ item.price * item.count }}원
+    <table class="order-table">
+      <thead>
+        <tr>
+          <th>상품명</th>
+          <th>수량</th>
+          <th>금액</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in order %}
+        <tr>
+          <td>{{ item.name }} {% if item.options %} ({{ item.options }}) {% endif %}</td>
+          <td>{{ item.count }}</td>
+          <td>{{ item.price * item.count }}원</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="summary">
+      
+      총 결제금액 <span class="highlight">{{ total }}원</span>
     </div>
-    {% endfor %}
   </div>
 
-  <div class="total">총 결제 금액: {{ total }}원</div>
+  <div class="button-group">
+    <button class="back-btn" onclick="window.location.href='/menu'">돌아가기</button>
+    <button class="pay-btn" onclick="openModal()">카드결제</button>
+  </div>
 
-  <form action="/finish_payment" method="post">
-    <button type="submit" class="confirm-btn">결제 완료</button>
-  </form>
+  <!-- 카드 결제 모달 -->
+  <div class="modal" id="cardModal">
+    <div class="modal-content">
+      <h2>카드 결제</h2>
+      <img src="{{ url_for('static', filename='images/f.png') }}" />
+      <div>다음 그림과 같이 신용/체크카드를 넣어주세요</div>
+      <div class="amount">{{ total }}원</div>
+
+      <div class="btns">
+        <button class="cancel-btn" onclick="closeModal()">취소</button>
+        <button class="confirm-btn" onclick="paymentComplete()">승인요청</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openModal() {
+      document.getElementById('cardModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('cardModal').style.display = 'none';
+    }
+    
+    function paymentComplete() {
+    closeModal();  
+    setTimeout(() => {
+        window.location.href = '/payfin';
+    }, 1000);
+}
+    
+  </script>
+
 </body>
 </html>

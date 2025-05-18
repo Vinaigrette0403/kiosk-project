@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>결제 완료</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f2f2f2;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background-color: white;
+      padding: 50px 30px;
+      border-radius: 20px;
+      text-align: center;
+      width: 500px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .container img {
+      width: 150px;
+      margin-bottom: 20px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+
+    .order-number {
+      border: 3px solid red;
+      display: inline-block;
+      padding: 10px 40px;
+      border-radius: 10px;
+      font-size: 36px;
+      font-weight: bold;
+      color: red;
+      margin-bottom: 30px;
+    }
+
+    .message {
+      font-size: 22px;
+      line-height: 1.8;
+      color: #333;
+    }
+
+    .message span {
+      color: red;
+      font-weight: bold;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 30px;
+      color: #333;
+    }
+   
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>결제완료</h1>
+    <img src="{{ url_for('static', filename='images/g.png') }}" />
+    <div class="order-number">0001</div>
+    <div class="message">
+      결제가 완료되었습니다.<br>
+      카드리더기에서 <span>카드를 제거하세요.</span><br>
+      <span>영수증</span>을 받아가세요.<br><br>
+      이용해주셔서 감사합니다.
+    </div>
+  </div>
+
+  <script>
+    // 5초 후 index.html 자동 이동
+    setTimeout(function() {
+      window.location.href = "{{ url_for('index') }}";
+    }, 5000);
+  </script>
+</body>
+</html>

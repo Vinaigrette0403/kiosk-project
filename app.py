@@ -2,10 +2,11 @@ from flask import Flask, render_template, request, redirect, url_for, session
 import json
 from flask import session
 
+
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-# 음료와 가격 정보
+
 menu_items = {
     '아메리카노': 4000,
     '카페라떼': 4500,
@@ -28,17 +29,16 @@ def payment():
     if request.method == 'POST':
         data = request.get_json()
         session['order'] = data.get('order', [])
-        return '', 204  # 비어 있는 응답
+        return '', 204  
 
-    else:  # GET
+    else:  
         order = session.get('order', [])
         total = sum(item['count'] * item['price'] for item in order)
         return render_template('payment.html', order=order, total=total)
 
-@app.route('/finish_payment', methods=['POST'])
-def finish_payment():
-    session.pop('order', None)  # 장바구니 초기화
-    return redirect('/')        # 초기 메뉴화면으로 이동
+@app.route('/payfin')
+def payfin():
+    return render_template('payfin.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
