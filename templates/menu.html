@@ -135,7 +135,23 @@
       border-color: #007bff;
       background-color: #e3f2fd;
     }
-  </style>
+  
+#voice-button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+#voice-button img {
+  width: 80px;
+  height: 80px;
+}
+
+</style>
 </head>
 <body>
   <div class="menu-container">
@@ -151,20 +167,20 @@
         <img src="{{ url_for('static', filename='images/choco.jpeg') }}">
         <h3>초코라떼(4,500원)</h3>
     </div>        
-        <div class="menu-item" onclick="openOptionModal('카라멜 마끼아또',5000)">
-        <img src="{{ url_for('static', filename='images/caramel.jpeg') }}">
-        <h3>카라멜 마끼아또(5,000원)</h3>   
+        <div class="menu-item" onclick="openOptionModal('아이스티',5000)">
+        <img src="{{ url_for('static', filename='images/icetea.jpg') }}">
+        <h3>아이스티(3,000원)</h3>   
     </div>
         <div class="menu-item" onclick="openOptionModal('녹차라떼',4000)">
-        <img src="{{ url_for('static', filename='images/green.jpeg') }}">
+        <img src="{{ url_for('static', filename='images/green.png') }}">
         <h3>녹차라떼(4,000원)</h3>
     </div>
         <div class="menu-item" onclick="openOptionModal('딸기라떼',5000)">
-        <img src="{{ url_for('static', filename='images/strawberry.jpeg') }}">
+        <img src="{{ url_for('static', filename='images/strawberry.jpg') }}">
         <h3>딸기라떼(5,000원)</h3>
     </div>
         <div class="menu-item" onclick="openOptionModal('바닐라라떼',3500)">
-        <img src="{{ url_for('static', filename='images/vanilla.jpeg') }}">
+        <img src="{{ url_for('static', filename='images/vanilla.png') }}">
         <h3>바닐라라떼(3,500원)</h3>
     </div>
     
@@ -172,6 +188,13 @@
 
   <div id="cart">
     <h2>장바구니</h2>
+
+  
+  <button id="voice-button" onclick="startVoiceOrder()">
+    <img src="{{ url_for('static', filename='images/mic.png') }}" alt="음성 주문" />
+  </button>
+
+
     <ul id="cart-items"></ul>
     <p>총액: <span id="total">0</span>원</p>
     <button id="checkout-btn" onclick="checkout()">결제하기</button>
@@ -226,7 +249,7 @@
     const hotInput = document.querySelector("#hot");
     const hotLabel = document.querySelector("label[for='hot']");
 
-    const iceOnlyItems = ['딸기라떼'];  // ICE 전용 음료들
+    const iceOnlyItems = ['딸기라떼', '아이스티'];  // ICE 전용 음료들
 
     if (iceOnlyItems.includes(name)) {
         hotInput.style.visibility = "hidden";
@@ -352,6 +375,75 @@
         });
          document.getElementById('total').innerText = total;
     }
+
+  function startVoiceOrder() {
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'ko-KR';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.start();
+
+    recognition.onresult = function(event) {
+      const speechText = event.results[0][0].transcript;
+      console.log("음성 인식 결과:", speechText);
+      handleVoiceCommand(speechText);
+    };
+
+    recognition.onerror = function(event) {
+      alert("음성 인식 오류: " + event.error);
+    };
+  }
+
+  function handleVoiceCommand(text) {
+    const menuNames = ['아메리카노', '카페라떼', '초코라떼', '딸기라떼', '녹차라떼', '바닐라라떼', '아이스티'];
+    const options = {
+      temp: ['아이스', '핫'],
+      add: ['샷 추가', '휘핑 추가', '바닐라 시럽'],
+      req: ['얼음 적게', '연하게']
+    };
+
+    let foundMenu = menuNames.find(name => text.includes(name));
+    if (!foundMenu) return alert("메뉴명을 인식하지 못했습니다.");
+
+    let temp = text.includes('아이스') ? 'ICE' : (text.includes('핫') ? 'HOT' : '');
+    if (!temp) return alert("온도를 명확히 말씀해주세요. (아이스 또는 핫)");
+
+    let reqs = options.req.filter(opt => text.includes(opt));
+    let adds = options.add.filter(opt => text.includes(opt));
+
+    const priceMap = {
+      '아메리카노': 2000,
+      '카페라떼': 3000,
+      '초코라떼': 4500,
+      '딸기라떼': 5000,
+      '녹차라떼': 4000,
+      '바닐라라떼': 3500,
+      '아이스티': 3000
+    };
+
+    let basePrice = priceMap[foundMenu];
+    let extra = adds.length * 500;
+    let finalPrice = basePrice + extra;
+    let optionsSummary = [temp, ...reqs, ...adds].join(', ');
+
+    const li = document.createElement('li');
+    li.dataset.name = foundMenu;
+    li.dataset.price = finalPrice;
+    li.dataset.count = 1;
+    li.dataset.options = optionsSummary;
+    li.innerHTML = `
+        ${foundMenu} (${optionsSummary}) -
+        <span class="item-qty">1</span>개
+        <button class="qty-btn" onclick="changeQty(this, 1)">+</button>
+        <button class="qty-btn" onclick="changeQty(this, -1)">-</button>
+        <span class="item-subtotal">${finalPrice}원</span>
+        <button class="delete-btn" onclick="this.parentElement.remove(); updateTotal();">삭제</button>
+    `;
+    document.getElementById('cart-items').appendChild(li);
+    updateTotal();
+  }
+
 </script>
 </body>
 </html>
