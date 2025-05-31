@@ -199,6 +199,9 @@
       <button onclick="openModal('pointModal')">적립하기</button>
       <button onclick="openModal('couponModal')">쿠폰 사용하기</button>
     </div>
+    <div style="text-align: center; margin-top: 10px;">
+      <button onclick="openModal('checkStampModal')">스탬프 현황 확인</button>
+    </div>
   </div>
 
   <div class="button-group">
@@ -240,6 +243,17 @@
         <label>전화번호 입력:</label><br>
         <input type="text" name="phone" required>
         <button type="submit">쿠폰 사용</button>
+      </form>
+    </div>
+  </div>
+  <!-- 스탬프 현황 모달 -->
+  <div class="modal" id="checkStampModal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('checkStampModal')">&times;</span>
+      <form action="{{ url_for('check_stamp') }}" method="POST">
+        <label>전화번호 입력:</label><br>
+        <input type="text" name="phone" required>
+        <button type="submit">확인하기</button>
       </form>
     </div>
   </div>

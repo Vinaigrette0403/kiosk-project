@@ -4,6 +4,7 @@ from flask import session
 from flask import send_file
 from gtts import gTTS
 import os
+import re
 
 
 app = Flask(__name__)
@@ -97,7 +98,6 @@ def save_points():
 
 @app.route('/earn_point', methods=['POST'])
 def earn_point():
-    # 적립 1회 제한
     if session.get('earned'):
         session['message'] = "이미 적립이 완료된 주문입니다."
         return redirect(url_for('payment'))
@@ -106,6 +106,9 @@ def earn_point():
     order = session.get('order', [])
     count = sum(item['count'] for item in order)
 
+    if not re.match(r'^010\d{7,8}$', phone):
+        session['message'] = "유효한 전화번호를 입력하세요. (예: 01012345678)"
+        return redirect(url_for('payment'))
     if not phone:
         session['message'] = "전화번호를 입력하세요."
         return redirect(url_for('payment'))
@@ -113,25 +116,32 @@ def earn_point():
     if phone not in user_points:
         user_points[phone] = {'count': 0, 'coupon': False}
 
-    user_points[phone]['count'] += count
+    # ✅ 누적 계산
+    total_count = user_points[phone]['count'] + count
+    coupon_count = total_count // 5
+    remaining = total_count % 5
 
-    if user_points[phone]['count'] >= 5:
+    if coupon_count >= 1:
         user_points[phone]['coupon'] = True
-        user_points[phone]['count'] = 0
-        session['message'] = "쿠폰이 발급되었습니다!"
+        user_points[phone]['count'] = remaining
+        session['message'] = f"쿠폰이 발급되었습니다! 현재 {remaining}/5잔 적립 중입니다."
     else:
-        session['message'] = "적립이 완료되었습니다."
+        user_points[phone]['count'] = total_count
+        session['message'] = f"적립이 완료되었습니다. 현재 {total_count}/5잔 적립 중입니다."
 
     save_points()
-
     session['phone'] = phone
-    session['earned'] = True  # ✅ 적립 완료 표시
+    session['earned'] = True
     return redirect(url_for('payment'))
 
 @app.route('/use_coupon', methods=['POST'])
 def use_coupon():
     phone = request.form.get('phone')
 
+    
+    if not re.match(r'^010\d{7,8}$', phone):
+        session['message'] = "유효한 전화번호를 입력하세요. (예: 01012345678)"
+        return redirect(url_for('payment'))
     if phone in user_points and user_points[phone].get('coupon'):
         session['coupon'] = True
         user_points[phone]['coupon'] = False
@@ -142,6 +152,28 @@ def use_coupon():
         session['message'] = "사용 가능한 쿠폰이 없습니다."
 
     session['phone'] = phone
+    return redirect(url_for('payment'))
+
+@app.route('/check_stamp', methods=['POST'])
+def check_stamp():
+    phone = request.form.get('phone')
+    
+    if not re.match(r'^010\d{7,8}$', phone):
+        session['message'] = "유효한 전화번호를 입력하세요. (예: 01012345678)"
+        return redirect(url_for('payment'))
+    if not phone:
+        session['message'] = "전화번호를 입력해주세요."
+        return redirect(url_for('payment'))
+    
+    user = user_points.get(phone)
+    
+    if user:
+        stamp = user.get('count', 0)
+        coupon = 1 if user.get('coupon', False) else 0
+        session['message'] = f"현재 스탬프 {stamp}/5개, 쿠폰 {coupon}장 보유 중입니다."
+    else:
+        session['message'] = "등록된 정보가 없습니다."
+
     return redirect(url_for('payment'))
 
 if __name__ == '__main__':
