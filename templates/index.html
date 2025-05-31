@@ -29,10 +29,22 @@
         <img src="{{ url_for('static', filename='images/c.png') }}" alt="로고">
     </div>
 
+    <audio autoplay>
+        <source src="{{ url_for('static', filename='welcome.mp3') }}" type="audio/mpeg">
+        브라우저가 오디오를 지원하지 않습니다.
+    </audio>
+
     <script>
         function goToMenu() {
             window.location.href = "{{ url_for('menu') }}";
         }
+    </script>
+
+    <script>
+        window.addEventListener("load", () => {
+            const audio = new Audio("{{ url_for('static', filename='welcome.mp3') }}");
+            audio.play().catch(e => console.warn("자동재생 차단됨:", e));
+        });
     </script>
 </body>
 </html>

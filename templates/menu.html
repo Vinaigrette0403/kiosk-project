@@ -169,7 +169,7 @@
     </div>        
         <div class="menu-item" onclick="openOptionModal('아이스티',5000)">
         <img src="{{ url_for('static', filename='images/icetea.jpg') }}">
-        <h3>아이스티(3,000원)</h3>   
+        <h3>아이스티(3,000원)</h3>
     </div>
         <div class="menu-item" onclick="openOptionModal('녹차라떼',4000)">
         <img src="{{ url_for('static', filename='images/green.png') }}">
@@ -232,7 +232,7 @@
       </div>
 
       <button onclick="addToCart()">주문담기</button>
-      <button onclick="closeOptionModal()">취소</button>
+      <button onclick="playVoice('주문을 취소했습니다');closeOptionModal();">취소</button>
     </div>
   </div>
 <script>
@@ -245,11 +245,14 @@
     document.querySelector('#req1').checked = true;
     document.querySelector('#add1').checked = true;
     document.getElementById('optionModal').style.display = 'flex';
+    
+    const audio = new Audio(`/speak/${encodeURIComponent(name)}`);
+    audio.play();
 
     const hotInput = document.querySelector("#hot");
     const hotLabel = document.querySelector("label[for='hot']");
 
-    const iceOnlyItems = ['딸기라떼', '아이스티'];  // ICE 전용 음료들
+    const iceOnlyItems = ['딸기라떼','아이스티'];  // ICE 전용 음료들
 
     if (iceOnlyItems.includes(name)) {
         hotInput.style.visibility = "hidden";
@@ -267,6 +270,7 @@
 
   function closeOptionModal() {
     document.getElementById('optionModal').style.display = 'none';
+    
   }
 
   function addToCart() {
@@ -299,14 +303,24 @@
         <button class="qty-btn" onclick="changeQty(this, 1)">+</button>
         <button class="qty-btn" onclick="changeQty(this, -1)">-</button>
         <span class="item-subtotal">${finalPrice}원</span>
-        <button class="delete-btn" onclick="this.parentElement.remove(); updateTotal();">삭제</button>
+        <button class="delete-btn" onclick="deleteItem(this)">삭제</button>
     `;
     document.getElementById('cart-items').appendChild(li);
 
     updateTotal();
     closeOptionModal();
+    playVoice("메뉴가 장바구니에 담겼습니다");
   }
+  function deleteItem(btn) {
+  btn.parentElement.remove();
+  updateTotal();
+  playVoice("해당 음료가 삭제되었습니다");
+}
+
+  
+  
   function checkout() {
+    
     const orderItems = [];
      document.querySelectorAll('#cart-items li').forEach(li => {
         orderItems.push({
@@ -360,12 +374,20 @@
         if (count <= 0) {
             li.remove();
             updateTotal();
+            
             return;
         };
         qtySpan.textContent = count;
         li.dataset.count = count;
         li.querySelector('.item-subtotal').innerText = (parseInt(li.dataset.price) * count) + "원";
         updateTotal();
+        if (delta > 0) {
+          playVoice("수량이 증가했습니다");
+        } else {
+          playVoice("수량이 감소했습니다");
+        }
+        
+        
     }
 
     function updateTotal() {
@@ -396,7 +418,7 @@
   }
 
   function handleVoiceCommand(text) {
-    const menuNames = ['아메리카노', '카페라떼', '초코라떼', '딸기라떼', '녹차라떼', '바닐라라떼', '아이스티'];
+    const menuNames = ['아메리카노', '카페라떼', '초코라떼', '딸기라떼', '녹차라떼', '바닐라라떼','아이스티'];
     const options = {
       temp: ['아이스', '핫'],
       add: ['샷 추가', '휘핑 추가', '바닐라 시럽'],
@@ -443,7 +465,44 @@
     document.getElementById('cart-items').appendChild(li);
     updateTotal();
   }
+  
 
 </script>
+
+<script>
+  function playVoice(text) {
+    const audio = new Audio(`/speak/${encodeURIComponent(text)}`);
+    audio.play();
+  }
+  
+document.querySelectorAll('input[name="temp"]').forEach(radio => {
+  radio.addEventListener('change', () => {
+    const label = document.querySelector(`label[for="${radio.id}"]`);
+    if (label) playVoice(label.textContent);
+  });
+});
+
+
+document.querySelectorAll('.req-option').forEach(cb => {
+  cb.addEventListener('change', () => {
+    if (cb.checked) {
+      const label = document.querySelector(`label[for="${cb.id}"]`);
+      if (label) playVoice(label.textContent);
+    }
+  });
+});
+
+
+document.querySelectorAll('.add-option').forEach(cb => {
+  cb.addEventListener('change', () => {
+    if (cb.checked) {
+      const label = document.querySelector(`label[for="${cb.id}"]`);
+      if (label) playVoice(label.textContent);
+    }
+  });
+});
+
+</script>
+
 </body>
 </html>
