@@ -153,6 +153,57 @@
       border-radius: 8px;
       cursor: pointer;
     }
+    .keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 15px;
+  }
+
+  .key {
+    background-color: #f0f0f0;
+    text-align: center;
+    padding: 20px 0;
+    font-size: 20px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .key.enter {
+    background-color: #00cc66;
+    color: white;
+    font-weight: bold;
+  }
+  .kiosk-btn {
+    font-size: 28px;
+    padding: 18px 40px;
+    border: none;
+    border-radius: 12px;
+    margin: 10px;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    transition: transform 0.1s ease;
+  }
+
+  .kiosk-btn:active {
+    transform: scale(0.98);
+  }
+
+  .kiosk-btn.green {
+    background-color: #00aa55;
+  }
+
+  .kiosk-btn.orange {
+    background-color: #ff6600;
+  }
+
+  .kiosk-btn.blue {
+    background-color: #3366cc;
+  }
+
+
+    
   </style>
 </head>
 <body>
@@ -196,12 +247,13 @@
     {% endif %}
 
     <div style="text-align: center; margin-top: 20px;">
-      <button onclick="openModal('pointModal')">적립하기</button>
-      <button onclick="openModal('couponModal')">쿠폰 사용하기</button>
-    </div>
-    <div style="text-align: center; margin-top: 10px;">
-      <button onclick="openModal('checkStampModal')">스탬프 현황 확인</button>
-    </div>
+  <button class="kiosk-btn green" onclick="openModal('pointModal')">적립하기</button>
+  <button class="kiosk-btn orange" onclick="openModal('couponModal')">쿠폰 사용하기</button>
+</div>
+<div style="text-align: center; margin-top: 10px;">
+  <button class="kiosk-btn blue" onclick="openModal('checkStampModal')">스탬프 현황 확인</button>
+</div>
+
   </div>
 
   <div class="button-group">
@@ -227,36 +279,78 @@
   <div class="modal" id="pointModal">
     <div class="modal-content">
       <span class="close" onclick="closeModal('pointModal')">&times;</span>
-      <form action="{{ url_for('earn_point') }}" method="POST">
-        <label>전화번호 입력:</label><br>
-        <input type="text" name="phone" required>
-        <button type="submit">적립하기</button>
+      <label style="font-size: 20px;">전화번호 입력:</label><br>
+    <input type="text" id="phoneInput1" readonly style="font-size: 24px; padding: 10px; text-align: center;"><br>
+    <div class="keypad">
+      <div class="key" onclick="appendNumber('1', 'phoneInput1', 'hiddenPhone1')">1</div>
+      <div class="key" onclick="appendNumber('2', 'phoneInput1', 'hiddenPhone1')">2</div>
+      <div class="key" onclick="appendNumber('3', 'phoneInput1', 'hiddenPhone1')">3</div>
+      <div class="key" onclick="appendNumber('4', 'phoneInput1', 'hiddenPhone1')">4</div>
+      <div class="key" onclick="appendNumber('5', 'phoneInput1', 'hiddenPhone1')">5</div>
+      <div class="key" onclick="appendNumber('6', 'phoneInput1', 'hiddenPhone1')">6</div>
+      <div class="key" onclick="appendNumber('7', 'phoneInput1', 'hiddenPhone1')">7</div>
+      <div class="key" onclick="appendNumber('8', 'phoneInput1', 'hiddenPhone1')">8</div>
+      <div class="key" onclick="appendNumber('9', 'phoneInput1', 'hiddenPhone1')">9</div>
+      <div class="key" onclick="appendNumber('0', 'phoneInput1', 'hiddenPhone1')">0</div>
+      <div class="key" onclick="deleteNumber('phoneInput1', 'hiddenPhone1')">DEL</div>
+      <form action="{{ url_for('earn_point') }}" method="POST" style="grid-column: span 3;">
+        <input type="hidden" id="hiddenPhone1" name="phone">
+        <button type="submit" class="key enter">적립</button>
       </form>
     </div>
   </div>
+</div>
 
   <!-- 쿠폰 모달 -->
   <div class="modal" id="couponModal">
     <div class="modal-content">
       <span class="close" onclick="closeModal('couponModal')">&times;</span>
-      <form action="{{ url_for('use_coupon') }}" method="POST">
-        <label>전화번호 입력:</label><br>
-        <input type="text" name="phone" required>
-        <button type="submit">쿠폰 사용</button>
+      <label style="font-size: 20px;">전화번호 입력:</label><br>
+    <input type="text" id="phoneInput2" readonly style="font-size: 24px; padding: 10px; text-align: center;"><br>
+    <div class="keypad">
+      <div class="key" onclick="appendNumber('1', 'phoneInput2', 'hiddenPhone2')">1</div>
+      <div class="key" onclick="appendNumber('2', 'phoneInput2', 'hiddenPhone2')">2</div>
+      <div class="key" onclick="appendNumber('3', 'phoneInput2', 'hiddenPhone2')">3</div>
+      <div class="key" onclick="appendNumber('4', 'phoneInput2', 'hiddenPhone2')">4</div>
+      <div class="key" onclick="appendNumber('5', 'phoneInput2', 'hiddenPhone2')">5</div>
+      <div class="key" onclick="appendNumber('6', 'phoneInput2', 'hiddenPhone2')">6</div>
+      <div class="key" onclick="appendNumber('7', 'phoneInput2', 'hiddenPhone2')">7</div>
+      <div class="key" onclick="appendNumber('8', 'phoneInput2', 'hiddenPhone2')">8</div>
+      <div class="key" onclick="appendNumber('9', 'phoneInput2', 'hiddenPhone2')">9</div>
+      <div class="key" onclick="appendNumber('0', 'phoneInput2', 'hiddenPhone2')">0</div>
+      <div class="key" onclick="deleteNumber('phoneInput2', 'hiddenPhone2')">DEL</div>
+      <form action="{{ url_for('use_coupon') }}" method="POST" style="grid-column: span 3;">
+        <input type="hidden" id="hiddenPhone2" name="phone">
+        <button type="submit" class="key enter">쿠폰 사용</button>
       </form>
     </div>
   </div>
+</div>
   <!-- 스탬프 현황 모달 -->
   <div class="modal" id="checkStampModal">
     <div class="modal-content">
       <span class="close" onclick="closeModal('checkStampModal')">&times;</span>
-      <form action="{{ url_for('check_stamp') }}" method="POST">
-        <label>전화번호 입력:</label><br>
-        <input type="text" name="phone" required>
-        <button type="submit">확인하기</button>
+      <label style="font-size: 20px;">전화번호 입력:</label><br>
+    <input type="text" id="phoneInput3" readonly style="font-size: 24px; padding: 10px; text-align: center;"><br>
+    <div class="keypad">
+      <div class="key" onclick="appendNumber('1', 'phoneInput3', 'hiddenPhone3')">1</div>
+      <div class="key" onclick="appendNumber('2', 'phoneInput3', 'hiddenPhone3')">2</div>
+      <div class="key" onclick="appendNumber('3', 'phoneInput3', 'hiddenPhone3')">3</div>
+      <div class="key" onclick="appendNumber('4', 'phoneInput3', 'hiddenPhone3')">4</div>
+      <div class="key" onclick="appendNumber('5', 'phoneInput3', 'hiddenPhone3')">5</div>
+      <div class="key" onclick="appendNumber('6', 'phoneInput3', 'hiddenPhone3')">6</div>
+      <div class="key" onclick="appendNumber('7', 'phoneInput3', 'hiddenPhone3')">7</div>
+      <div class="key" onclick="appendNumber('8', 'phoneInput3', 'hiddenPhone3')">8</div>
+      <div class="key" onclick="appendNumber('9', 'phoneInput3', 'hiddenPhone3')">9</div>
+      <div class="key" onclick="appendNumber('0', 'phoneInput3', 'hiddenPhone3')">0</div>
+      <div class="key" onclick="deleteNumber('phoneInput3', 'hiddenPhone3')">DEL</div>
+      <form action="{{ url_for('check_stamp') }}" method="POST" style="grid-column: span 3;">
+        <input type="hidden" id="hiddenPhone3" name="phone">
+        <button type="submit" class="key enter">확인하기</button>
       </form>
     </div>
   </div>
+</div>
 
   <script>
     function openModal(id) {
@@ -284,6 +378,27 @@
       audio.play();
     };
   </script>
+  
+  
+
+<script>
+  function appendNumber(num, inputId, hiddenId) {
+    const input = document.getElementById(inputId);
+    if (input.value.length < 11) {
+      input.value += num;
+      document.getElementById(hiddenId).value = input.value;
+    }
+  }
+
+  function deleteNumber(inputId, hiddenId) {
+    const input = document.getElementById(inputId);
+    input.value = input.value.slice(0, -1);
+    document.getElementById(hiddenId).value = input.value;
+  }
+</script>
+
+
+
 
 </body>
 </html>
