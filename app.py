@@ -6,6 +6,18 @@ from gtts import gTTS
 import os
 import re
 
+ORDER_FILE = 'order_number.json'
+
+# 서버 시작 시 주문번호 불러오기
+if os.path.exists(ORDER_FILE):
+    with open(ORDER_FILE, 'r') as f:
+        current_order_number = json.load(f).get("order_number", 1)
+else:
+    current_order_number = 1
+
+def save_order_number():
+    with open(ORDER_FILE, 'w') as f:
+        json.dump({"order_number": current_order_number}, f)
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -45,8 +57,17 @@ def payment():
 
 @app.route('/payfin')
 def payfin():
+    global current_order_number
+
+    formatted_order_number = f"{current_order_number:04d}"  # 예: 0001
+
+    # 다음 번호로 증가 (0010 넘으면 0001로)
+    current_order_number = current_order_number + 1 if current_order_number < 10 else 1
+    save_order_number()
+
     session.clear()
-    return render_template('payfin.html')
+    return render_template('payfin.html', order_number=formatted_order_number)
+
 
 
 @app.route('/voice_order', methods=['POST'])
